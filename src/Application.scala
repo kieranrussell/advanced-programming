@@ -11,7 +11,7 @@ object Application extends App {
 
   def getWeatherData: Map[String, List[(Int, Int)]] = {
     var weatherData: Map[String, List[(Int, Int)]] = SortedMap()
-    try{
+    try {
       weatherData = Source.fromFile("C:/Users/Kieran/Documents/Uni/advance-programming/src/data/weatherdata14March.txt").getLines().map {
         dataSet => dataSet.split(",")
       }.map {
@@ -21,7 +21,7 @@ object Application extends App {
           stringNumbers => (stringNumbers(0).toInt, stringNumbers(1).toInt)
         }.toList
       }.toMap
-    } catch{
+    } catch {
       case e: Exception => println("Failed to read and transform data.", e.getStackTrace)
     }
 
@@ -82,7 +82,7 @@ object Application extends App {
 
   def getTemperateDifference(data: Map[String, List[(Int, Int)]]): Map[String, List[Int]] = {
     data.map {
-      case (name, values) => name -> values.map{
+      case (name, values) => name -> values.map {
         case (min, max) => max - min
       }
     }.toMap
@@ -139,7 +139,7 @@ object Application extends App {
 
   def getSummary(city: String, latestTemperature: Iterable[Map[String, (Int, Int)]], minMaxTemperatures: Map[String, List[Int]]) = {
     val latestTempsTuple = latestTemperature.filter(_.contains(city)).flatMap(_.get(city)).toList.head
-    val latestTempsAsList = List(latestTempsTuple._1,latestTempsTuple._2)
+    val latestTempsAsList = List(latestTempsTuple._1, latestTempsTuple._2)
     val minMaxTemps = minMaxTemperatures.get(city).toList.head
 
     Map(city -> Map("latest" -> latestTempsAsList, "exceptions" -> minMaxTemps))
@@ -150,7 +150,7 @@ object Application extends App {
   }
 
   def generateSummaryText(summary: Map[String, Map[String, List[Int]]]) = {
-    val summaryText = summary.map{
+    val summaryText = summary.map {
       case (city, summary) =>
         city + ":\n Latest: " + arrayToString(summary.get("latest")) + "\n Min/Max: " + arrayToString(summary.get("exceptions"))
     }.mkString("\n")
@@ -160,13 +160,25 @@ object Application extends App {
   }
 
   def printSummaryForEachCity(cities: List[String], data: Map[String, List[(Int, Int)]]) = {
-    cities.map{
+    cities.map {
       city => getSummary(city, getLatestTemperature(data), getMinMaxTemperatures(getTemperateDifference(data)))
     }.foreach(summary => generateSummaryText(summary))
   }
 
+  def getListOfCitiesFromUser(data: Map[String, List[(Int, Int)]]) = {
+    var cities: List[String] = List()
+
+    try {
+      cities = readLine("\nPlease enter a list of cites as comma separated values: ").split(",").map(_.trim).toList
+    }  catch {
+      case e: Exception => println("Malformatted Input. Please try again.", e.getStackTrace)
+    }
+
+    cities.filter(city => data.contains(city))
+  }
+
   def handle5(data: Map[String, List[(Int, Int)]]): Boolean = {
-    val cities = List("Sevilla", "Salamanca", "Palma de Mallorca")
+    val cities = getListOfCitiesFromUser(data)
 
     printSummaryForEachCity(cities, data)
 
