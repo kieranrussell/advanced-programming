@@ -137,8 +137,29 @@ object Application extends App {
     true
   }
 
+  def getSummary(city: String, latestTemperature: Iterable[Map[String, (Int, Int)]], minMaxTemperatures: Map[String, List[Int]]) = {
+    val latestTempsTuple = latestTemperature.filter(_.contains(city)).flatMap(_.get(city)).toList.head
+    val tatestTempsAsList = List(latestTempsTuple._1,latestTempsTuple._2)
+    val minMaxTemps = minMaxTemperatures.get(city).toList.head
+
+    Map(city -> Map("latest" -> tatestTempsAsList, "exceptions" -> minMaxTemps))
+  }
+
+  def generateSummaryText(summary: Map[String, Map[String, List[Int]]]) = {
+    val summaryText = summary.map{
+      case (city, summary) =>
+        city + ":\n Latest: " + summary.get("latest").mkString(",") + "\n Min/Max: " + summary.get("exceptions").mkString(",")
+    }.mkString("\n")
+
+    println(summaryText)
+    println()
+  }
+
   def handle5(data: Map[String, List[(Int, Int)]]): Boolean = {
-    println("Executing method handler 5")
+    val city = "Sevilla"
+    val summary = getSummary(city, getLatestTemperature(data), getMinMaxTemperatures(getTemperateDifference(data)))
+
+    generateSummaryText(summary)
     true
   }
 
