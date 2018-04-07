@@ -139,27 +139,37 @@ object Application extends App {
 
   def getSummary(city: String, latestTemperature: Iterable[Map[String, (Int, Int)]], minMaxTemperatures: Map[String, List[Int]]) = {
     val latestTempsTuple = latestTemperature.filter(_.contains(city)).flatMap(_.get(city)).toList.head
-    val tatestTempsAsList = List(latestTempsTuple._1,latestTempsTuple._2)
+    val latestTempsAsList = List(latestTempsTuple._1,latestTempsTuple._2)
     val minMaxTemps = minMaxTemperatures.get(city).toList.head
 
-    Map(city -> Map("latest" -> tatestTempsAsList, "exceptions" -> minMaxTemps))
+    Map(city -> Map("latest" -> latestTempsAsList, "exceptions" -> minMaxTemps))
+  }
+
+  def arrayToString(maybeInts: Option[List[Int]]): String = {
+    maybeInts.toList.flatten.mkString(", ")
   }
 
   def generateSummaryText(summary: Map[String, Map[String, List[Int]]]) = {
     val summaryText = summary.map{
       case (city, summary) =>
-        city + ":\n Latest: " + summary.get("latest").mkString(",") + "\n Min/Max: " + summary.get("exceptions").mkString(",")
+        city + ":\n Latest: " + arrayToString(summary.get("latest")) + "\n Min/Max: " + arrayToString(summary.get("exceptions"))
     }.mkString("\n")
 
     println(summaryText)
     println()
   }
 
-  def handle5(data: Map[String, List[(Int, Int)]]): Boolean = {
-    val city = "Sevilla"
-    val summary = getSummary(city, getLatestTemperature(data), getMinMaxTemperatures(getTemperateDifference(data)))
+  def printSummaryForEachCity(cities: List[String], data: Map[String, List[(Int, Int)]]) = {
+    cities.map{
+      city => getSummary(city, getLatestTemperature(data), getMinMaxTemperatures(getTemperateDifference(data)))
+    }.foreach(summary => generateSummaryText(summary))
+  }
 
-    generateSummaryText(summary)
+  def handle5(data: Map[String, List[(Int, Int)]]): Boolean = {
+    val cities = List("Sevilla", "Salamanca", "Palma de Mallorca")
+
+    printSummaryForEachCity(cities, data)
+
     true
   }
 
