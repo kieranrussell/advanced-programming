@@ -94,6 +94,12 @@ object Application extends App {
     }.toMap
   }
 
+  def getMinMaxTemperatures(stringToInts: Map[String, List[Int]]): Map[String, List[Int]] = {
+    stringToInts.map {
+      case (name, values) => name -> List(values.min, values.max)
+    }.toMap
+  }
+
   def printKeyValueTuple(latestTemps: Iterable[Map[String, (Int, Int)]]) = {
     val latestTempsMap = latestTemps.map {
       pair => pair.keys.head + ": " + pair.get(pair.keys.head).toList.mkString(",")
@@ -122,13 +128,12 @@ object Application extends App {
   }
 
   def handle3(data: Map[String, List[(Int, Int)]]): Boolean = {
-    println("Executing method handler 3")
     printKeyValue(getMeanAverageTemperatures(getTemperateDifference(data)))
     true
   }
 
   def handle4(data: Map[String, List[(Int, Int)]]): Boolean = {
-    println("Executing method handler 4")
+    printKeyValue(getMinMaxTemperatures(getTemperateDifference(data)))
     true
   }
 
