@@ -104,6 +104,12 @@ object Application extends App {
     }.toMap
   }
 
+  def getGreatestOnly(cityToMinMaxDifferences: Map[String, List[Int]]): Map[String, List[Int]] = {
+    cityToMinMaxDifferences.map {
+      case (name, values) => name -> List(values.max)
+    }.toMap
+  }
+
   def getSummary(city: String, latestTemperature: Iterable[Map[String, (Int, Int)]], minMaxTemperatures: Map[String, List[Int]]) = {
     val latestTempsTuple = latestTemperature.filter(_.contains(city)).flatMap(_.get(city)).toList.head
     val latestTempsAsList = List(latestTempsTuple._1, latestTempsTuple._2)
@@ -190,7 +196,7 @@ object Application extends App {
 
   def handle4(data: Map[String, List[(Int, Int)]]): Boolean = {
     println("City Name | Greatest Difference")
-    printIntKeyValue(getMinMaxTemperatures(getTemperateDifference(data)))
+    printIntKeyValue(getGreatestOnly(getMinMaxTemperatures(getTemperateDifference(data))))
     true
   }
 
