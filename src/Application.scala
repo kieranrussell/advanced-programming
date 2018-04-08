@@ -72,11 +72,11 @@ object Application extends App {
   def printMenu() {
     println(
       """|Please select one of the following:
-        |1.	Get the most recent temperature values recorded for each city i.e. last year’s.
-        |2.	Get the difference between minimum and maximum temperatures for each year for each city. A new map structure of type Map[String, List[Int]] could be used to store the differences.
+        |1.	Get the most recent temperature values recorded for each city.
+        |2.	Get the difference between minimum and maximum temperatures for each year for each city.
         |3.	Get the average (mean) difference between minimum and maximum temperatures for each city.
         |4.	Get the greatest difference in minimum and maximum temperatures for each year for each city.
-        |5.	Allow the user to input a set of potential city destinations and construct a summary which maps the city name to last year’s recorded temperature values - the summary should also display the overall average maximum and minimum temperatures for the chosen itinerary.
+        |5.	Get summary.
         |6.	Exit.""".stripMargin)
   }
 
