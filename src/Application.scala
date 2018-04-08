@@ -92,9 +92,9 @@ object Application extends App {
     }.toMap
   }
 
-  def getMeanAverageTemperatures(stringToInts: Map[String, List[Int]]): Map[String, List[Int]] = {
+  def getMeanAverageTemperatures(stringToInts: Map[String, List[Int]]): Map[String, List[Double]] = {
     stringToInts.map {
-      case (name, values) => name -> List(values.sum / values.length)
+      case (name, values) => name -> List[Double](values.sum.toDouble / values.length)
     }.toMap
   }
 
@@ -152,7 +152,7 @@ object Application extends App {
     println()
   }
 
-  def printKeyValue(stringToInts: Map[String, List[Int]]) = {
+  def printIntKeyValue(stringToInts: Map[String, List[Int]]) = {
     val stringKeyValueMap = stringToInts.map {
       case (key, value) =>
         key + ": " + value.toList.mkString(", ")
@@ -161,27 +161,36 @@ object Application extends App {
     println()
   }
 
+  def printDoubleKeyValue(stringToInts: Map[String, List[Double]]) = {
+    val stringKeyValueMap = stringToInts.map {
+      case (key, value) =>
+        key + ": " + value.toList.map("%.2f".format(_)).mkString(", ")
+    }.toList.mkString("\n")
+    println(stringKeyValueMap)
+    println()
+  }
+
   def handle1(data: Map[String, List[(Int, Int)]]): Boolean = {
-    println("City Name | Latest Temperature")
+    println("City Name | Latest Temperature (Low, High)")
     printKeyValueTuple(getLatestTemperature(data))
     true
   }
 
   def handle2(data: Map[String, List[(Int, Int)]]): Boolean = {
-    println("City Name | Differences")
-    printKeyValue(getTemperateDifference(data))
+    println("City Name | Difference per year")
+    printIntKeyValue(getTemperateDifference(data))
     true
   }
 
   def handle3(data: Map[String, List[(Int, Int)]]): Boolean = {
     println("City Name | Average Difference")
-    printKeyValue(getMeanAverageTemperatures(getTemperateDifference(data)))
+    printDoubleKeyValue(getMeanAverageTemperatures(getTemperateDifference(data)))
     true
   }
 
   def handle4(data: Map[String, List[(Int, Int)]]): Boolean = {
     println("City Name | Greatest Difference")
-    printKeyValue(getMinMaxTemperatures(getTemperateDifference(data)))
+    printIntKeyValue(getMinMaxTemperatures(getTemperateDifference(data)))
     true
   }
 
