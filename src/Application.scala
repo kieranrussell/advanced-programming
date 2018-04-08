@@ -139,7 +139,7 @@ object Application extends App {
   }
 
   //Given a city name, latest temperature and max/min temperatures are returned in a map to city name
-  def getSummary(city: String, latestTemperature: Iterable[Map[String, (Int, Int)]], minMaxTemperatures: Map[String, List[Int]]) = {
+  def getSummary(city: String, latestTemperature: Iterable[Map[String, (Int, Int)]], minMaxTemperatures: Map[String, List[String]]) = {
     val latestTempsTuple = latestTemperature.filter(_.contains(city)).flatMap(_.get(city)).toList.head
     val latestTempsAsList = List(latestTempsTuple._1, latestTempsTuple._2)
     val minMaxTemps = minMaxTemperatures.get(city).toList.head
@@ -147,19 +147,36 @@ object Application extends App {
     Map(city -> Map("latest" -> latestTempsAsList, "exceptions" -> minMaxTemps))
   }
 
+  //Given the weathr data set this function will return a map of City name to Average Min/Max temperature
+  def getAverageMinMax(weatherData: Map[String, List[(Int, Int)]]): Map[String, List[String]] = {
+    weatherData.map {
+      case (cityName, values) => cityName -> List(
+        values.foldLeft(0) { (acc, tup) => acc + tup._1 } / values.length.toDouble,
+        values.foldLeft(0) { (acc, tup) => acc + tup._2 } / values.length.toDouble
+      ).map {
+        double => roundToTwoPlaces(double)
+      }
+    }.toMap
+  }
+
+  //Helper function for rounding Decimals to 2 decimal places. As String
+  def roundToTwoPlaces(value: Double): String = {
+    "%.2f".format(value)
+  }
+
   //Partial application of getSummary function. Passing in requited data for latest and min/max temperatures.
   //getSummaryForCity accepts a single parameter of city name
-  def getSummaryForCity(city: String): Map[String, Map[String, List[Int]]] = {
-    getSummary(city, getLatestTemperature(weatherData), getMinMaxTemperatures(getTemperateDifference(weatherData)))
+  def getSummaryForCity(city: String): Map[String, Map[String, List[Any]]] = {
+    getSummary(city, getLatestTemperature(weatherData), getAverageMinMax(weatherData))
   }
 
   //Turns a List of Ints which are a Map option to a string value of comma seperated values
-  def arrayToString(list: Option[List[Int]]): String = {
+  def arrayToString(list: Option[List[Any]]): String = {
     list.toList.flatten.mkString(", ")
   }
 
   //Function which constructs the message to print for each summary given a map of city name to summary details
-  def generateSummaryText(summary: Map[String, Map[String, List[Int]]]) = {
+  def generateSummaryText(summary: Map[String, Map[String, List[Any]]]) = {
     val summaryText = summary.map {
       case (city, summary) =>
         city + ":\n Latest: " + arrayToString(summary.get("latest")) + "\n Min/Max: " + arrayToString(summary.get("exceptions"))
@@ -243,6 +260,7 @@ object Application extends App {
     true
   }
 
+  //Handler for option 5 - summary - gets list of cities and then prints or asks user to re-enter their list if invalid (Recursive)
   def handle5(data: Map[String, List[(Int, Int)]]): Boolean = {
     val cities = getListOfCitiesFromUser(data)
 
