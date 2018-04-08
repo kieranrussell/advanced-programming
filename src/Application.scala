@@ -5,7 +5,7 @@ import scala.io.Source
   * Created by Kieran on 04/04/2018.
   */
 object Application extends App {
-  var getWeatherDataFromDataDir = getWeatherData("C:/Users/Kieran/Documents/Uni/advance-programming/src/data/weatherdata14Marc.txt")
+  var getWeatherDataFromDataDir = getWeatherData("C:/Users/Kieran/Documents/Uni/advance-programming/src/data/weatherdata14March.txt")
 
   var weatherData: Map[String, List[(Int, Int)]] = getWeatherDataFromDataDir
 
@@ -162,21 +162,25 @@ object Application extends App {
   }
 
   def handle1(data: Map[String, List[(Int, Int)]]): Boolean = {
+    println("City Name | Latest Temperature")
     printKeyValueTuple(getLatestTemperature(data))
     true
   }
 
   def handle2(data: Map[String, List[(Int, Int)]]): Boolean = {
+    println("City Name | Differences")
     printKeyValue(getTemperateDifference(data))
     true
   }
 
   def handle3(data: Map[String, List[(Int, Int)]]): Boolean = {
+    println("City Name | Average Difference")
     printKeyValue(getMeanAverageTemperatures(getTemperateDifference(data)))
     true
   }
 
   def handle4(data: Map[String, List[(Int, Int)]]): Boolean = {
+    println("City Name | Greatest Difference")
     printKeyValue(getMinMaxTemperatures(getTemperateDifference(data)))
     true
   }
